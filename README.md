@@ -1,5 +1,5 @@
-# dual-readout
-Repository for GEANT4 simulation &amp; analysis of the dual-readout calorimeter.
+# eic-dual-readout
+Repository for GEANT4 simulation &amp; analysis of the dual-readout calorimeter at Electron-Ion Collider (EIC)
 
 ## How-to
 ### Compile
@@ -17,7 +17,7 @@ For a case that needs to install the package (e.g. `condor` requires file transf
     cmake -DCMAKE_INSTALL_PREFIX=<path_to_install_directory> ..
     make -j4
     make install
-    
+
 Note that to use the installed binary & library files, need to do following (assuming `$PWD=<path_to_install_directory>`)
 
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HEPMC_DIR/lib64:$FASTJET_DIR/lib:$PYTHIA_DIR/lib:$PWD/lib
