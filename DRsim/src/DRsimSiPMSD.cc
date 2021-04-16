@@ -6,14 +6,19 @@
 #include "G4SDManager.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTypes.hh"
+#include "G4RunManager.hh"
 
 using namespace std;
 
 DRsimSiPMSD::DRsimSiPMSD(const G4String& name, const G4String& hitsCollectionName, DRsimInterface::DRsimTowerProperty towerProp)
 : G4VSensitiveDetector(name), fHitCollection(0), fHCID(-1), fWavBin(120), fTimeBin(600),
-fPhiUnit(2*M_PI/(G4float)DRsimDetectorConstruction::sNumZRot), fWavlenStart(900.), fWavlenEnd(300.), fTimeStart(10.), fTimeEnd(70.)
+  fWavlenStart(900.), fWavlenEnd(300.), fTimeStart(10.), fTimeEnd(70.)
 {
   collectionName.insert(hitsCollectionName);
+
+  const DRsimDetectorConstruction* pUserDetectorConstruction = dynamic_cast<const DRsimDetectorConstruction*>(G4RunManager::GetRunManager()->GetUserDetectorConstruction());
+  fPhiUnit = 2*M_PI/static_cast<G4float>( pUserDetectorConstruction->GetNumZRot() );
+
   fWavlenStep = (fWavlenStart-fWavlenEnd)/(float)fWavBin;
   fTimeStep = (fTimeEnd-fTimeStart)/(float)fTimeBin;
 

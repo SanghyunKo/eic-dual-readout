@@ -33,14 +33,12 @@ public:
   virtual G4VPhysicalVolume* Construct();
   virtual void ConstructSDandField();
 
-  static int sNumZRot;
-  static double sTowerH;
-
   G4bool HasBarrel() const { return fDoBarrel; }
   G4bool HasEndcap() const { return fDoEndcap; }
 
   G4int GetNumBarrel() const { return mNumBarrel; }
   G4int GetNumEndcap() const { return mNumEndcap; }
+  G4int GetNumZRot() const { return mNumZRot; }
 
 private:
   void DefineCommands();
@@ -96,6 +94,8 @@ private:
 
   G4int mNumBarrel;
   G4int mNumEndcap;
+  G4int mNumZRot;
+  G4double mTowerH;
 
   std::unique_ptr<dimensionB> pDimB;
   std::unique_ptr<dimensionE> pDimE;

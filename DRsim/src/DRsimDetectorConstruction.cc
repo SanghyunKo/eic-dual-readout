@@ -26,9 +26,6 @@ using namespace std;
 G4ThreadLocal DRsimMagneticField* DRsimDetectorConstruction::fMagneticField = 0;
 G4ThreadLocal G4FieldManager* DRsimDetectorConstruction::fFieldMgr = 0;
 
-int DRsimDetectorConstruction::sNumZRot = 283;
-double DRsimDetectorConstruction::sTowerH = 1250.; // tower height
-
 DRsimDetectorConstruction::DRsimDetectorConstruction()
 : G4VUserDetectorConstruction(), fMessenger(0), fMaterials(NULL) {
   DefineCommands();
@@ -79,6 +76,8 @@ DRsimDetectorConstruction::DRsimDetectorConstruction()
 
   mNumBarrel = 52;
   mNumEndcap = 40;
+  mNumZRot = 283;
+  mTowerH = 1250.*mm; // tower height
 }
 
 DRsimDetectorConstruction::~DRsimDetectorConstruction() {
@@ -109,11 +108,11 @@ G4VPhysicalVolume* DRsimDetectorConstruction::Construct() {
 
   innerR = 1800.;
   fulltheta = 0.;
-  phi_unit = 2*M_PI/(G4double)sNumZRot;
+  phi_unit = 2*M_PI/(G4double)mNumZRot;
 
-  fiber = new G4Tubs("fiber",0,clad_C_rMax,sTowerH/2.,0*deg,360.*deg);// S is the same
-  fiberC = new G4Tubs("fiberC",0,core_C_rMax,sTowerH/2.,0*deg,360.*deg);
-  fiberS = new G4Tubs("fiberS",0,core_S_rMax,sTowerH/2.,0*deg,360.*deg);
+  fiber = new G4Tubs("fiber",0,clad_C_rMax,mTowerH/2.,0*deg,360.*deg);// S is the same
+  fiberC = new G4Tubs("fiberC",0,core_C_rMax,mTowerH/2.,0*deg,360.*deg);
+  fiberS = new G4Tubs("fiberS",0,core_S_rMax,mTowerH/2.,0*deg,360.*deg);
 
   fCerenRegion = new G4Region("cerenRegion");
   fScintRegion = new G4Region("scintRegion");
@@ -122,8 +121,8 @@ G4VPhysicalVolume* DRsimDetectorConstruction::Construct() {
   if (fDoBarrel) {
     pDimB = std::make_unique<dimensionB>();
     pDimB->SetInnerR(innerR);
-    pDimB->SetTower_height(sTowerH);
-    pDimB->SetNumZRot(sNumZRot);
+    pDimB->SetTower_height(mTowerH);
+    pDimB->SetNumZRot(mNumZRot);
     pDimB->SetPMTT(fPMTT+fFilterT);
 
     pDimB->Rbool(1);
@@ -139,8 +138,8 @@ G4VPhysicalVolume* DRsimDetectorConstruction::Construct() {
   if (fDoEndcap) {
     pDimE = std::make_unique<dimensionE>();
     pDimE->SetInnerR_new(3125.83);
-    pDimE->SetTower_height(sTowerH);
-    pDimE->SetNumZRot(sNumZRot);
+    pDimE->SetTower_height(mTowerH);
+    pDimE->SetNumZRot(mNumZRot);
     pDimE->SetDeltaTheta(fDThetaEndcap);
     pDimE->SetPMTT(fPMTT+fFilterT);
 
@@ -196,9 +195,9 @@ void DRsimDetectorConstruction::ConstructSDandField() {
 
   FastOpTransportModel* cerenModel = new FastOpTransportModel("fastOpTransportCeren",fCerenRegion);
   FastOpTransportModel* scintModel = new FastOpTransportModel("fastOpTransportScint",fScintRegion);
-  cerenModel->SetFiberLength(DRsimDetectorConstruction::sTowerH);
+  cerenModel->SetFiberLength(mTowerH);
   cerenModel->SetCoreMaterial(FindMaterial("PMMA"));
-  scintModel->SetFiberLength(DRsimDetectorConstruction::sTowerH);
+  scintModel->SetFiberLength(mTowerH);
   scintModel->SetCoreMaterial(FindMaterial("Polystyrene"));
 }
 
@@ -220,7 +219,7 @@ void DRsimDetectorConstruction::Barrel(G4LogicalVolume* towerLogical[], G4Logica
     pmtg = new G4Trap("PMTGB",pt);
     PMTGLogical[i] = new G4LogicalVolume(pmtg,FindMaterial("G4_AIR"),towerName);
 
-    for(int j=0;j<sNumZRot;j++){
+    for(int j=0;j<mNumZRot;j++){
       new G4PVPlacement(pDimB->GetRM(j),pDimB->GetOrigin(j),towerLogical[i],towerName,worldLogical,false,j,checkOverlaps);
       new G4PVPlacement(pDimB->GetRM(j),pDimB->GetOrigin_PMTG(j),PMTGLogical[i],towerName,worldLogical,false,j,checkOverlaps);
     }
@@ -236,7 +235,7 @@ void DRsimDetectorConstruction::Barrel(G4LogicalVolume* towerLogical[], G4Logica
     towerProp.towerXY = fTowerXY;
     towerProp.towerTheta = std::make_pair(iTheta,signedTowerTheta);
     towerProp.innerR = pDimB->GetInnerR_new();
-    towerProp.towerH = sTowerH;
+    towerProp.towerH = mTowerH;
     towerProp.dTheta = fDThetaBarrel[i];
     towerProps.push_back(towerProp);
 
@@ -293,7 +292,7 @@ void DRsimDetectorConstruction::Endcap(G4LogicalVolume* towerLogical[], G4Logica
     pmtg = new G4Trap("PMTGE",pt);
     PMTGLogical[i] = new G4LogicalVolume(pmtg,FindMaterial("G4_AIR"),towerName);
 
-    for(int j=0;j<sNumZRot;j++){
+    for(int j=0;j<mNumZRot;j++){
       new G4PVPlacement(pDimE->GetRM(j),pDimE->GetOrigin(j),towerLogical[i],towerName,worldLogical,false,j,checkOverlaps);
       new G4PVPlacement(pDimE->GetRM(j),pDimE->GetOrigin_PMTG(j),PMTGLogical[i],towerName,worldLogical,false,j,checkOverlaps);
     }
@@ -309,7 +308,7 @@ void DRsimDetectorConstruction::Endcap(G4LogicalVolume* towerLogical[], G4Logica
     towerProp.towerXY = fTowerXY;
     towerProp.towerTheta = std::make_pair(iTheta,signedTowerTheta);
     towerProp.innerR = pDimE->GetInnerR_new();
-    towerProp.towerH = sTowerH;
+    towerProp.towerH = mTowerH;
     towerProp.dTheta = fDThetaEndcap;
     towerProps.push_back(towerProp);
 
@@ -362,7 +361,7 @@ void DRsimDetectorConstruction::fiberBarrel(G4int i, G4double deltatheta_,G4Logi
   v4 = pDimB->GetV4();
 
   innerSide_half = pDimB->GetInnerR_new()*tan(deltatheta_/2.);
-  outerSide_half = (pDimB->GetInnerR_new()+sTowerH)*tan(deltatheta_/2.);
+  outerSide_half = (pDimB->GetInnerR_new()+mTowerH)*tan(deltatheta_/2.);
 
   int numx = (int)(((v4.getX()*tan(phi_unit/2.)*2)-1.2*mm)/(1.5*mm)) + 1;
   int numy = (int)((outerSide_half*2-1.2*mm)/(1.5*mm)) + 1;
@@ -432,7 +431,7 @@ void DRsimDetectorConstruction::fiberEndcap(G4int i, G4double deltatheta_, G4Log
   v4 = pDimE->GetV4();
 
   innerSide_half = pDimE->GetInnerR_new()*tan(deltatheta_/2.);
-  outerSide_half = (pDimE->GetInnerR_new()+sTowerH)*tan(deltatheta_/2.);
+  outerSide_half = (pDimE->GetInnerR_new()+mTowerH)*tan(deltatheta_/2.);
 
   int numx = (int)(((v4.getX()*tan(phi_unit/2.)*2)-1.2*mm)/(1.5*mm)) + 1;
   int numy = (int)((outerSide_half*2-1.2*mm)/(1.5*mm)) + 1;
