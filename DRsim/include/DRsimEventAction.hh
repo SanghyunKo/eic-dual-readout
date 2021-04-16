@@ -8,6 +8,8 @@
 #include "G4HCofThisEvent.hh"
 #include "G4Event.hh"
 
+class DRsimDetectorConstruction;
+
 class DRsimEventAction : public G4UserEventAction {
 public:
   typedef std::pair<int,int> toweriTiP;
@@ -32,6 +34,8 @@ private:
   std::map<toweriTiP, DRsimInterface::DRsimEdepData> fEdepMap;
 
   std::vector<G4int> fSiPMCollID;
+
+  const DRsimDetectorConstruction* pUserDetectorConstruction;
 };
 
 #endif

@@ -19,6 +19,7 @@ DRsimEventAction::DRsimEventAction()
 {
   // set printing per each event
   G4RunManager::GetRunManager()->SetPrintProgress(1);
+  pUserDetectorConstruction = dynamic_cast<const DRsimDetectorConstruction*>(G4RunManager::GetRunManager()->GetUserDetectorConstruction());
 }
 
 DRsimEventAction::~DRsimEventAction() {}
@@ -27,13 +28,18 @@ void DRsimEventAction::BeginOfEventAction(const G4Event*) {
 	clear();
 
   G4SDManager* sdManager = G4SDManager::GetSDMpointer();
-  for (int i = 0; i < DRsimDetectorConstruction::sNumBarrel; i++) {
-    fSiPMCollID.push_back(sdManager->GetCollectionID("BRC"+std::to_string(i)));
-    fSiPMCollID.push_back(sdManager->GetCollectionID("BLC"+std::to_string(i)));
+  if (pUserDetectorConstruction->HasBarrel()) {
+    for (int i = 0; i < pUserDetectorConstruction->GetNumBarrel(); i++) {
+      fSiPMCollID.push_back(sdManager->GetCollectionID("BRC"+std::to_string(i)));
+      fSiPMCollID.push_back(sdManager->GetCollectionID("BLC"+std::to_string(i)));
+    }
   }
-  for (int i = 0; i < DRsimDetectorConstruction::sNumEndcap; i++) {
-    fSiPMCollID.push_back(sdManager->GetCollectionID("ERC"+std::to_string(i)));
-    fSiPMCollID.push_back(sdManager->GetCollectionID("ELC"+std::to_string(i)));
+
+  if (pUserDetectorConstruction->HasEndcap()) {
+    for (int i = 0; i < pUserDetectorConstruction->GetNumEndcap(); i++) {
+      fSiPMCollID.push_back(sdManager->GetCollectionID("ERC"+std::to_string(i)));
+      fSiPMCollID.push_back(sdManager->GetCollectionID("ELC"+std::to_string(i)));
+    }
   }
 
   fEventData = new DRsimInterface::DRsimEventData();

@@ -60,6 +60,7 @@ void DRsimMaterials::CreateMaterials() {
   G4Element* F  = new G4Element("Fluorine",symbol="F" , z=9., a=18.9984*g/mole);
 
   fCu = new G4Material("Copper", z=29., a=63.546*g/mole, density=8.96*g/cm3);
+  fW = new G4Material("Tungsten", z=74., a=183.85*g/mole, density=19.3*g/cm3);
   fSi = new G4Material("Silicon", z=14., a=28.09*g/mole, density=2.33*g/cm3);
 
   fVacuum = G4Material::GetMaterial("G4_Galactic");

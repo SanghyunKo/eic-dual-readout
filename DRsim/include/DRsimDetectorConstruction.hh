@@ -33,10 +33,14 @@ public:
   virtual G4VPhysicalVolume* Construct();
   virtual void ConstructSDandField();
 
-  static int sNumBarrel;
-  static int sNumEndcap;
   static int sNumZRot;
   static double sTowerH;
+
+  G4bool HasBarrel() const { return fDoBarrel; }
+  G4bool HasEndcap() const { return fDoEndcap; }
+
+  G4int GetNumBarrel() const { return mNumBarrel; }
+  G4int GetNumEndcap() const { return mNumEndcap; }
 
 private:
   void DefineCommands();
@@ -85,8 +89,16 @@ private:
   G4double fFilterT;
   G4double fSiPMT;
 
-  dimensionB* dimB;
-  dimensionE* dimE;
+  G4bool fDoBarrel;
+  G4bool fDoEndcap;
+  G4bool fDoFiber;
+  G4String mTowerMaterial;
+
+  G4int mNumBarrel;
+  G4int mNumEndcap;
+
+  std::unique_ptr<dimensionB> pDimB;
+  std::unique_ptr<dimensionE> pDimE;
 
   char name[20];
   G4String towerName;
