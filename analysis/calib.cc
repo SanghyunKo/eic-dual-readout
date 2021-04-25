@@ -23,7 +23,6 @@ int main(int argc, char* argv[]) {
   TString filename = argv[1];
   int iEta = atoi(argv[2]);
   int iPhi = 0;
-  float Cthres = 32.5;
 
   float low = 0.;
   float high = 25.;
@@ -90,14 +89,15 @@ int main(int argc, char* argv[]) {
           auto timeData = *TmpItr;
           if(DRsimInterface::IsCerenkov(sipmData[i].x, sipmData[i].y)) {
             tCtime->Fill((timeData.first.first + timeData.first.second)/2, timeData.second);
-            if(fEta == iEta && fPhi == iPhi) Ctime->Fill((timeData.first.first + timeData.first.second)/2, timeData.second);
-            if (timeData.first.first < Cthres) {
-              ftC_hits += timeData.second; if(fEta == iEta && fPhi == iPhi) fC_hits += timeData.second;
+            ftC_hits += timeData.second;
+            if(fEta == iEta && fPhi == iPhi) {
+              Ctime->Fill((timeData.first.first + timeData.first.second)/2, timeData.second);
+              fC_hits += timeData.second;
             }
           } else {
             tStime->Fill((timeData.first.first + timeData.first.second)/2, timeData.second);
             ftS_hits += timeData.second;
-            if(fEta == iEta && fPhi == iPhi){
+            if(fEta == iEta && fPhi == iPhi) {
               Stime->Fill((timeData.first.first + timeData.first.second)/2, timeData.second);
               fS_hits += timeData.second;
             }
