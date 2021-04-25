@@ -23,7 +23,6 @@ int main(int argc, char* argv[]) {
   TString filename = argv[1];
   int iEta = atoi(argv[2]);
   int iPhi = 0;
-  float Cthres = 32.5;
 
   float low = 0.;
   float high = 25.;
@@ -38,7 +37,7 @@ int main(int argc, char* argv[]) {
   tStime->Sumw2(); tStime->SetLineColor(kRed); tStime->SetLineWidth(2);
   TH1I* tChit = new TH1I("Total_C_Hit","Total hits of Cerenkov ch",100,0.,3000.);
   tChit->Sumw2(); tChit->SetLineColor(kBlue); tChit->SetLineWidth(2);
-  TH1I* tShit = new TH1I("Total_S_Hit","Total hits of Scintillation ch",100,0.,40000.);
+  TH1I* tShit = new TH1I("Total_S_Hit","Total hits of Scintillation ch",100,0.,20000.);
   tShit->Sumw2(); tShit->SetLineColor(kRed); tShit->SetLineWidth(2);
 
   TH1F* Edep = new TH1F("Edep","Energy deposit;MeV;Evt",100,low*1000.,high*1000.);
@@ -49,7 +48,7 @@ int main(int argc, char* argv[]) {
   Stime->Sumw2(); Stime->SetLineColor(kRed); Stime->SetLineWidth(2);
   TH1I* Chit = new TH1I("C_Hit","hits of Cerenkov ch",100,0.,3000.);
   Chit->Sumw2(); Chit->SetLineColor(kBlue); Chit->SetLineWidth(2);
-  TH1I* Shit = new TH1I("S_Hit","hits of Scintillation ch",100,0.,40000.);
+  TH1I* Shit = new TH1I("S_Hit","hits of Scintillation ch",100,0.,20000.);
   Shit->Sumw2(); Shit->SetLineColor(kRed); Shit->SetLineWidth(2);
 
   RootInterface<DRsimInterface::DRsimEventData>* drInterface = new RootInterface<DRsimInterface::DRsimEventData>(std::string(filename)+".root");
@@ -90,14 +89,15 @@ int main(int argc, char* argv[]) {
           auto timeData = *TmpItr;
           if(DRsimInterface::IsCerenkov(sipmData[i].x, sipmData[i].y)) {
             tCtime->Fill((timeData.first.first + timeData.first.second)/2, timeData.second);
-            if(fEta == iEta && fPhi == iPhi) Ctime->Fill((timeData.first.first + timeData.first.second)/2, timeData.second);
-            if (timeData.first.first < Cthres) {
-              ftC_hits += timeData.second; if(fEta == iEta && fPhi == iPhi) fC_hits += timeData.second;
+            ftC_hits += timeData.second
+            if(fEta == iEta && fPhi == iPhi) {
+              Ctime->Fill((timeData.first.first + timeData.first.second)/2, timeData.second);
+              fC_hits += timeData.second;
             }
           } else {
             tStime->Fill((timeData.first.first + timeData.first.second)/2, timeData.second);
             ftS_hits += timeData.second;
-            if(fEta == iEta && fPhi == iPhi){
+            if(fEta == iEta && fPhi == iPhi) {
               Stime->Fill((timeData.first.first + timeData.first.second)/2, timeData.second);
               fS_hits += timeData.second;
             }
