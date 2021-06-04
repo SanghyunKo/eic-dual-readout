@@ -18,8 +18,8 @@
 #include "G4ThreeVector.hh"
 #include "G4Region.hh"
 
-#include "dimensionB.hh"
-#include "dimensionE.hh"
+#include "DRparamBarrel.hh"
+#include "DRparamEndcap.hh"
 
 using namespace std;
 
@@ -81,8 +81,6 @@ private:
   G4double fulltheta;
   G4double fDThetaEndcap;
 
-  G4ThreeVector pt[8]={G4ThreeVector()};
-
   G4double fPMTT;
   G4double fFilterT;
   G4double fSiPMT;
@@ -97,8 +95,8 @@ private:
   G4int mNumZRot;
   G4double mTowerH;
 
-  std::unique_ptr<dimensionB> pDimB;
-  std::unique_ptr<dimensionE> pDimE;
+  std::unique_ptr<DRparamBarrel> pDimB;
+  std::unique_ptr<DRparamEndcap> pDimE;
 
   char name[20];
   G4String towerName;
