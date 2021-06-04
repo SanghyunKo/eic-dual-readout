@@ -135,6 +135,8 @@ G4VPhysicalVolume* DRsimDetectorConstruction::Construct() {
     implementTowers(pDimB.get(),towerLogicalBL,PMTGLogicalBL,PMTfilterLogicalBL,PMTcellLogicalBL,PMTcathLogicalBL,fiberLogical_BL,fiberLogical_BL_,fTowerBL);
   }
 
+  fBuiltBarrel = true; // must be true even if there is no barrel
+
   // endcap
   if (fDoEndcap) {
     pDimE = std::make_unique<DRparamEndcap>();
