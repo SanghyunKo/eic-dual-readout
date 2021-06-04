@@ -24,6 +24,7 @@
 using namespace std;
 
 class DRsimMagneticField;
+class TString;
 
 class DRsimDetectorConstruction : public G4VUserDetectorConstruction {
 public:
@@ -46,10 +47,10 @@ private:
   G4Material* FindMaterial(G4String matName) { return fMaterials->GetMaterial(matName); }
   G4OpticalSurface* FindSurface(G4String surfName) { return fMaterials->GetOpticalSurface(surfName); }
 
-  void implementTowers(DRparamBase* paramBase, G4LogicalVolume* towerLogical[], G4LogicalVolume* PMTGLogical[], G4LogicalVolume* PMTfilterLogical[], G4LogicalVolume* PMTcellLogical[],
-    G4LogicalVolume* PMTcathLogical[], std::vector<G4LogicalVolume*> fiberLogical[], std::vector<G4LogicalVolume*> fiberLogical_[], std::vector<DRsimInterface::DRsimTowerProperty>& towerProps);
+  void initGeoParam(TString funcFormula, G4double thres, G4double inner, G4double innerHalf, std::vector<G4double>& paramVec, G4int& param);
 
-  void implementFibers(DRparamBase* paramBase, G4int i, G4double deltatheta_, G4LogicalVolume* towerLogical[], std::vector<G4LogicalVolume*> fiberLogical[], std::vector<G4LogicalVolume*> fiberLogical_[]);
+  void implementTowers(DRparamBase* paramBase, std::vector<G4LogicalVolume*> PMTcathLogical, std::vector<DRsimInterface::DRsimTowerProperty>& towerProps);
+  void implementFibers(DRparamBase* paramBase, G4double dTheta, G4LogicalVolume* towerLogical);
 
   G4bool checkOverlaps;
   G4GenericMessenger* fMessenger;
@@ -67,9 +68,6 @@ private:
   G4Region* fScintRegion;
   G4Region* fCerenRegion;
 
-  G4double fulltheta;
-  G4double fDThetaEndcap;
-
   G4double fPMTT;
   G4double fFilterT;
   G4double fSiPMT;
@@ -83,14 +81,15 @@ private:
   G4int mNumEndcap;
   G4int mNumZRot;
   G4double mTowerH;
+  G4double mInnerX;
+  G4double mInnerZ;
 
   std::unique_ptr<DRparamBarrel> pDimB;
   std::unique_ptr<DRparamEndcap> pDimE;
-  G4bool fBuiltBarrel = false;
+  G4bool fIsEndcap = false;
 
   char name[20];
-  G4Trap* tower;
-  G4Trap* pmtg;
+  G4Trap* mTowerSolid;
   G4Trap* pmtcath;
   G4Tubs* fiber;
   G4Tubs* fiber_S;
@@ -100,43 +99,10 @@ private:
   G4VSolid* intersect;
   G4VSolid* intersect_;
 
-  G4LogicalVolume* towerLogicalBR[52];
-  G4LogicalVolume* towerLogicalBL[52];
-
-  G4LogicalVolume* towerLogicalER[40];
-  G4LogicalVolume* towerLogicalEL[40];
-
-  G4LogicalVolume* PMTGLogicalBR[52];
-  G4LogicalVolume* PMTGLogicalBL[52];
-
-  G4LogicalVolume* PMTGLogicalER[40];
-  G4LogicalVolume* PMTGLogicalEL[40];
-
-  G4LogicalVolume* PMTcathLogicalBR[52];
-  G4LogicalVolume* PMTcellLogicalBR[52];
-  G4LogicalVolume* PMTfilterLogicalBR[52];
-
-  G4LogicalVolume* PMTcathLogicalBL[52];
-  G4LogicalVolume* PMTcellLogicalBL[52];
-  G4LogicalVolume* PMTfilterLogicalBL[52];
-
-  G4LogicalVolume* PMTcathLogicalER[40];
-  G4LogicalVolume* PMTcellLogicalER[40];
-  G4LogicalVolume* PMTfilterLogicalER[40];
-
-  G4LogicalVolume* PMTcathLogicalEL[40];
-  G4LogicalVolume* PMTcellLogicalEL[40];
-  G4LogicalVolume* PMTfilterLogicalEL[40];
-
-  vector<G4LogicalVolume*> fiberLogical_BR[52];
-  vector<G4LogicalVolume*> fiberLogical_BR_[52];
-  vector<G4LogicalVolume*> fiberLogical_BL[52];
-  vector<G4LogicalVolume*> fiberLogical_BL_[52];
-
-  vector<G4LogicalVolume*> fiberLogical_ER[40];
-  vector<G4LogicalVolume*> fiberLogical_ER_[40];
-  vector<G4LogicalVolume*> fiberLogical_EL[40];
-  vector<G4LogicalVolume*> fiberLogical_EL_[40];
+  std::vector<G4LogicalVolume*> mPMTcathLogicalBR;
+  std::vector<G4LogicalVolume*> mPMTcathLogicalBL;
+  std::vector<G4LogicalVolume*> mPMTcathLogicalER;
+  std::vector<G4LogicalVolume*> mPMTcathLogicalEL;
 
   DRsimInterface::hitXY fTowerXY;
   std::vector<DRsimInterface::DRsimTowerProperty> fTowerBL;
@@ -167,7 +133,7 @@ private:
   std::vector<G4float> fFiberX;
   std::vector<G4float> fFiberY;
 
-  G4double fDThetaBarrel[52] = {
+  std::vector<G4double> fDThetaBarrel = { // kept for backward compatibility
     0.02222,0.02220,0.02217,0.02214,0.02209,0.02203,0.02196,0.02188,0.02179,0.02169,
     0.02158,0.02146,0.02133,0.02119,0.02105,0.02089,0.02073,0.02056,0.02039,0.02020,
     0.02002,0.01982,0.01962,0.01941,0.01920,0.01898,0.01876,0.01854,0.01831,0.01808,
@@ -175,6 +141,9 @@ private:
     0.01543,0.01518,0.01494,0.01470,0.01445,0.01421,0.01397,0.01373,0.01350,0.01326,
     0.01303,0.01280
   }; //apply the significance digit
+  std::vector<G4double> fDThetaEndcap;
+  G4double mTransition;
+  G4double mFullTheta;
 
   G4LogicalVolume* worldLogical;
 
