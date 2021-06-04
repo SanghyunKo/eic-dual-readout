@@ -67,12 +67,6 @@ private:
   G4Region* fScintRegion;
   G4Region* fCerenRegion;
 
-  G4double innerR;
-  G4double towerH;
-
-  G4double theta_unit;
-  G4double phi_unit;
-
   G4double fulltheta;
   G4double fDThetaEndcap;
 
@@ -172,11 +166,6 @@ private:
 
   std::vector<G4float> fFiberX;
   std::vector<G4float> fFiberY;
-
-  G4ThreeVector v1;
-  G4ThreeVector v2;
-  G4ThreeVector v3;
-  G4ThreeVector v4;
 
   G4double fDThetaBarrel[52] = {
     0.02222,0.02220,0.02217,0.02214,0.02209,0.02203,0.02196,0.02188,0.02179,0.02169,

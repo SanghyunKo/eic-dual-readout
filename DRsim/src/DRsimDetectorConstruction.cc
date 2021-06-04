@@ -55,8 +55,6 @@ DRsimDetectorConstruction::DRsimDetectorConstruction()
   fFilterT = 0.01*mm;
   fSiPMT = 0.01*mm;
 
-  theta_unit=0;
-  phi_unit=0;
   fDThetaEndcap = fDThetaBarrel[52-1];
 
   fVisAttrOrange = new G4VisAttributes(G4Colour(1.0,0.5,0.,1.0));
@@ -107,9 +105,7 @@ G4VPhysicalVolume* DRsimDetectorConstruction::Construct() {
   worldLogical = new G4LogicalVolume(worldSolid,FindMaterial("G4_Galactic"),"worldLogical");
   G4VPhysicalVolume* worldPhysical = new G4PVPlacement(0,G4ThreeVector(),worldLogical,"worldPhysical",0,false,0,checkOverlaps);
 
-  innerR = 1800.;
   fulltheta = 0.;
-  phi_unit = 2*M_PI/(G4double)mNumZRot;
 
   fiber = new G4Tubs("fiber",0,clad_C_rMax,mTowerH/2.,0*deg,360.*deg);// S is the same
   fiberC = new G4Tubs("fiberC",0,core_C_rMax,mTowerH/2.,0*deg,360.*deg);
@@ -121,7 +117,7 @@ G4VPhysicalVolume* DRsimDetectorConstruction::Construct() {
   // barrel
   if (fDoBarrel) {
     pDimB = std::make_unique<DRparamBarrel>();
-    pDimB->SetInnerX(innerR);
+    pDimB->SetInnerX(1.8*m);
     pDimB->SetTowerH(mTowerH);
     pDimB->SetNumZRot(mNumZRot);
     pDimB->SetSipmHeight(fPMTT+fFilterT);
@@ -288,15 +284,13 @@ void DRsimDetectorConstruction::implementFibers(DRparamBase* paramBase, G4int i,
   fFiberX.clear();
   fFiberY.clear();
 
-  v1 = paramBase->GetV1();
-  v2 = paramBase->GetV2();
-  v3 = paramBase->GetV3();
-  v4 = paramBase->GetV4();
+  G4ThreeVector v4 = paramBase->GetV4();
 
   G4double innerSide_half = paramBase->GetCurrentInnerR()*std::tan(deltatheta_/2.);
   G4double outerSide_half = (paramBase->GetCurrentInnerR()+mTowerH)*std::tan(deltatheta_/2.);
+  G4double phiUnit = 2*M_PI/static_cast<G4double>(mNumZRot);
 
-  int numx = (int)(((v4.getX()*std::tan(phi_unit/2.)*2)-1.2*mm)/(1.5*mm)) + 1;
+  int numx = (int)(((v4.getX()*std::tan(phiUnit/2.)*2)-1.2*mm)/(1.5*mm)) + 1;
   int numy = (int)((outerSide_half*2-1.2*mm)/(1.5*mm)) + 1;
   fTowerXY = std::make_pair(numx,numy);
 
