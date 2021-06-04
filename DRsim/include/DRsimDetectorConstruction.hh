@@ -46,15 +46,10 @@ private:
   G4Material* FindMaterial(G4String matName) { return fMaterials->GetMaterial(matName); }
   G4OpticalSurface* FindSurface(G4String surfName) { return fMaterials->GetOpticalSurface(surfName); }
 
-  void Barrel(G4LogicalVolume* towerLogical[], G4LogicalVolume* PMTGLogical[], G4LogicalVolume* PMTfilterLogical[], G4LogicalVolume* PMTcellLogical[],
+  void implementTowers(DRparamBase* paramBase, G4LogicalVolume* towerLogical[], G4LogicalVolume* PMTGLogical[], G4LogicalVolume* PMTfilterLogical[], G4LogicalVolume* PMTcellLogical[],
     G4LogicalVolume* PMTcathLogical[], std::vector<G4LogicalVolume*> fiberLogical[], std::vector<G4LogicalVolume*> fiberLogical_[], std::vector<DRsimInterface::DRsimTowerProperty>& towerProps);
 
-  void fiberBarrel(G4int i, G4double deltatheta_, G4LogicalVolume* towerLogical[], std::vector<G4LogicalVolume*> fiberLogical[], std::vector<G4LogicalVolume*> fiberLogical_[]);
-
-  void Endcap(G4LogicalVolume* towerLogical[], G4LogicalVolume* PMTGLogical[], G4LogicalVolume* PMTfilterLogical[], G4LogicalVolume* PMTcellLogical[],
-    G4LogicalVolume* PMTcathLogical[], std::vector<G4LogicalVolume*> fiberLogical[], std::vector<G4LogicalVolume*> fiberLogical_[], std::vector<DRsimInterface::DRsimTowerProperty>& towerProps);
-
-  void fiberEndcap(G4int i, G4double deltatheta, G4LogicalVolume* towerLogical[], std::vector<G4LogicalVolume*> fiberLogical[], std::vector<G4LogicalVolume*> fiberLogical_[]);
+  void implementFibers(DRparamBase* paramBase, G4int i, G4double deltatheta_, G4LogicalVolume* towerLogical[], std::vector<G4LogicalVolume*> fiberLogical[], std::vector<G4LogicalVolume*> fiberLogical_[]);
 
   G4bool checkOverlaps;
   G4GenericMessenger* fMessenger;
@@ -97,9 +92,9 @@ private:
 
   std::unique_ptr<DRparamBarrel> pDimB;
   std::unique_ptr<DRparamEndcap> pDimE;
+  G4bool fBuiltBarrel = false;
 
   char name[20];
-  G4String towerName;
   G4Trap* tower;
   G4Trap* pmtg;
   G4Trap* pmtcath;
@@ -182,11 +177,6 @@ private:
   G4ThreeVector v2;
   G4ThreeVector v3;
   G4ThreeVector v4;
-
-  G4double innerSide_half;
-  G4double innerSide_half_;
-  G4double outerSide_half;
-  G4double outerSide_half_;
 
   G4double fDThetaBarrel[52] = {
     0.02222,0.02220,0.02217,0.02214,0.02209,0.02203,0.02196,0.02188,0.02179,0.02169,
