@@ -49,7 +49,7 @@ private:
 
   void initGeoParam(TString funcFormula, G4double thres, G4double inner, G4double innerHalf, std::vector<G4double>& paramVec, G4int& param);
 
-  void implementTowers(DRparamBase* paramBase, std::vector<G4LogicalVolume*> PMTcathLogical, std::vector<DRsimInterface::DRsimTowerProperty>& towerProps);
+  void implementTowers(DRparamBase* paramBase, std::vector<G4LogicalVolume*>& PMTcathLogical, std::vector<DRsimInterface::DRsimTowerProperty>& towerProps);
   void implementFibers(DRparamBase* paramBase, G4double dTheta, G4LogicalVolume* towerLogical);
 
   G4bool checkOverlaps;
