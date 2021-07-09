@@ -238,7 +238,7 @@ void DRsimDetectorConstruction::initGeoParam(TString funcFormula, G4double thres
   param = paramVec.size();
 }
 
-void DRsimDetectorConstruction::implementTowers(DRparamBase* paramBase, std::vector<G4LogicalVolume*> PMTcathLogical, std::vector<DRsimInterface::DRsimTowerProperty>& towerProps) {
+void DRsimDetectorConstruction::implementTowers(DRparamBase* paramBase, std::vector<G4LogicalVolume*>& PMTcathLogical, std::vector<DRsimInterface::DRsimTowerProperty>& towerProps) {
   G4String moduleType = (fIsEndcap ? "E" : "B");
 
   for (int i = 0; i < (fIsEndcap ? mNumEndcap : mNumBarrel); i++) {
