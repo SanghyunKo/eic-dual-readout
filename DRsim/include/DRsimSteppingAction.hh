@@ -29,7 +29,7 @@ private:
     G4int towerITheta_ = std::stoi(towerName.substr(3));
     bool IsR = (towerName.find("R")==std::string::npos) ? false : true;
     bool IsB = (towerName.find("B")==std::string::npos) ? false : true;
-    if(!IsB) towerITheta_ += 52;
+    if(!IsB) towerITheta_ += 52; //Tungsten, 72
     if(!IsR) towerITheta_ = -towerITheta_-1;
 
     return towerITheta_;
