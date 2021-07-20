@@ -81,13 +81,13 @@ void DRsimPrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
     G4double yTowerFront = 0;
     G4double zTowerFront = 0;
 
-    if (-fTheta < 0.98) {
+    if (-fTheta < 0.98) { //when theta-3.0, if(-fTheta < 1.009){
       xTowerFront = 180;
-      zTowerFront = 180*tan(-fTheta-1.5*M_PI/180);
+      zTowerFront = 180*tan(-fTheta-1.5*M_PI/180); //1.5 -> 3.0
     } else {
-      G4double refLen = 180/cos(0.95077);
-      xTowerFront = refLen*cos(-fTheta-1.5*M_PI/180);
-      zTowerFront = refLen*sin(-fTheta-1.5*M_PI/180);
+      G4double refLen = 255.6;
+      xTowerFront = refLen/tan(-fTheta-1.5*M_PI/180);
+      zTowerFront = refLen;
     }
 
     G4double xRelLen = xTowerFront;
