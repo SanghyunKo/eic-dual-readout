@@ -3,6 +3,7 @@
 
 #include "DRsimInterface.h"
 #include "DRsimEventAction.hh"
+#include "DRsimDetectorConstruction.hh"
 
 #include "G4UserSteppingAction.hh"
 #include "G4LogicalVolume.hh"
@@ -18,22 +19,15 @@ public:
   virtual void UserSteppingAction(const G4Step*);
 
 private:
+  DRsimDetectorConstruction* DetectorConstruction = nullptr;
+  int fNumBarrel;
   DRsimEventAction* fEventAction;
   DRsimInterface::DRsimEdepData fEdep;
   DRsimInterface::DRsimLeakageData fLeak;
 
   G4VPhysicalVolume* GetMotherTower(G4TouchableHandle touchable) { return touchable->GetVolume(touchable->GetHistoryDepth()-1); }
   G4int GetTowerIPhi(G4VPhysicalVolume* motherTower_) { return motherTower_->GetCopyNo(); }
-
-  G4int GetTowerITheta(G4String towerName) {
-    G4int towerITheta_ = std::stoi(towerName.substr(3));
-    bool IsR = (towerName.find("R")==std::string::npos) ? false : true;
-    bool IsB = (towerName.find("B")==std::string::npos) ? false : true;
-    if(!IsB) towerITheta_ += 52; //Tungsten, 72
-    if(!IsR) towerITheta_ = -towerITheta_-1;
-
-    return towerITheta_;
-  }
+  G4int GetTowerITheta(G4String towerName);
 };
 
 #endif

@@ -9,7 +9,10 @@
 
 DRsimSteppingAction::DRsimSteppingAction(DRsimEventAction* eventAction)
 : G4UserSteppingAction(), fEventAction(eventAction)
-{}
+{ 
+  DetectorConstruction = new DRsimDetectorConstruction();
+  fNumBarrel = DetectorConstruction-> GetNumBarrel();
+} 
 
 DRsimSteppingAction::~DRsimSteppingAction() {}
 
@@ -66,3 +69,15 @@ void DRsimSteppingAction::UserSteppingAction(const G4Step* step) {
 
   return;
 }
+
+G4int DRsimSteppingAction::GetTowerITheta(G4String towerName){
+  G4int towerITheta_ = std::stoi(towerName.substr(3));
+  bool IsR = (towerName.find("R")==std::string::npos) ? false : true;
+  bool IsB = (towerName.find("B")==std::string::npos) ? false : true;
+  if(!IsB) towerITheta_ += fNumBarrel;
+  if(!IsR) towerITheta_ += -towerITheta_-1;
+
+  return towerITheta_;
+}
+  
+
