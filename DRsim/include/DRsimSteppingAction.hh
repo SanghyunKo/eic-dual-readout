@@ -19,7 +19,7 @@ public:
   virtual void UserSteppingAction(const G4Step*);
 
 private:
-  DRsimDetectorConstruction* DetectorConstruction = nullptr;
+  const DRsimDetectorConstruction* DetectorConstruction;
   int fNumBarrel;
   DRsimEventAction* fEventAction;
   DRsimInterface::DRsimEdepData fEdep;

@@ -6,11 +6,12 @@
 #include "G4OpProcessSubType.hh"
 #include "G4OpBoundaryProcess.hh"
 #include "G4EmProcessSubType.hh"
+#include "G4RunManager.hh"
 
 DRsimSteppingAction::DRsimSteppingAction(DRsimEventAction* eventAction)
 : G4UserSteppingAction(), fEventAction(eventAction)
 { 
-  DetectorConstruction = new DRsimDetectorConstruction();
+  DetectorConstruction = dynamic_cast<const DRsimDetectorConstruction*>(G4RunManager::GetRunManager()->GetUserDetectorConstruction());
   fNumBarrel = DetectorConstruction-> GetNumBarrel();
 } 
 
