@@ -71,7 +71,7 @@ DRsimDetectorConstruction::DRsimDetectorConstruction()
   fDoBarrel = false;
   fDoEndcap = true;
   fDoFiber = true;
-  mTowerMaterial = "Tungsten";
+  mTowerMaterial = "Copper"; //"Tungsten"
 
   mNumBarrel = 52;
   mNumEndcap = 40;
