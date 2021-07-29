@@ -11,8 +11,8 @@
 DRsimSteppingAction::DRsimSteppingAction(DRsimEventAction* eventAction)
 : G4UserSteppingAction(), fEventAction(eventAction)
 { 
-  DetectorConstruction = dynamic_cast<const DRsimDetectorConstruction*>(G4RunManager::GetRunManager()->GetUserDetectorConstruction());
-  fNumBarrel = DetectorConstruction-> GetNumBarrel();
+  pDetectorConstruction = dynamic_cast<const DRsimDetectorConstruction*>(G4RunManager::GetRunManager()->GetUserDetectorConstruction());
+  fNumBarrel = pDetectorConstruction-> GetNumBarrel();
 } 
 
 DRsimSteppingAction::~DRsimSteppingAction() {}
